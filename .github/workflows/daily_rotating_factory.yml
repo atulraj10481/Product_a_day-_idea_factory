@@ -55,9 +55,14 @@ jobs:
           mkdir -p data
           if [ -n "${{ secrets.AUTH_STATE_BASE64 }}" ]; then
             echo "Decoding AUTH_STATE_BASE64 to data/auth_state.json..."
-            echo "${{ secrets.AUTH_STATE_BASE64 }}" | base64 -d > data/auth_state.json
+            if echo "${{ secrets.AUTH_STATE_BASE64 }}" | base64 -d | gzip -t 2>/dev/null; then
+              echo "${{ secrets.AUTH_STATE_BASE64 }}" | base64 -d | gunzip > data/auth_state.json
+              echo "✅ Gzipped session cookies extracted successfully."
+            else
+              echo "${{ secrets.AUTH_STATE_BASE64 }}" | base64 -d > data/auth_state.json
+              echo "✅ Plain session cookies loaded successfully."
+            fi
             echo "auth_available=true" >> $GITHUB_OUTPUT
-            echo "✅ Session cookies loaded successfully."
           else
             echo "auth_available=false" >> $GITHUB_OUTPUT
             echo "::warning::AUTH_STATE_BASE64 secret is missing! LinkedIn and Wellfound may be skipped or run in guest mode. Run 'node scrapers/auth_manager.js' locally to generate and copy the secret."

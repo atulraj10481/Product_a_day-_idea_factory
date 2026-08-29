@@ -250,12 +250,12 @@ if run_all:
 if run_analyzer:
     run_script(["python", "engine/analyzer.py"], "Analyzer")
 
-# Auth Status Indicator
+# Cloud Automation / Local Session Indicator
 has_auth_file = os.path.exists('data/auth_state.json')
 if has_auth_file:
-    st.sidebar.caption("🟢 **Scraper Session:** Authenticated (`auth_state.json`)")
+    st.sidebar.caption("🟢 **Local Scraper Session:** Authenticated")
 else:
-    st.sidebar.caption("🟡 **Scraper Session:** Public / Guest Mode (`auth_state.json` absent)")
+    st.sidebar.caption("☁️ **Scraping Pipeline:** Automated on GitHub Actions (Daily 5:30 AM IST)")
 
 # ─── Load & Clean Data ──────────────────────────────────────────────────────
 try:
