@@ -1,0 +1,10 @@
+{
+  "name": "idea-factory-scrapers",
+  "version": "1.0.0",
+  "description": "Playwright scrapers for job boards",
+  "main": "index.js",
+  "dependencies": {
+    "playwright": "^1.40.0",
+    "dotenv": "^16.0.0"
+  }
+}

@@ -1,0 +1,118 @@
+name: Daily Rotating Idea Factory Pipeline
+
+on:
+  schedule:
+    # Runs daily at 00:00 UTC (5:30 AM IST)
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      platform_target:
+        description: 'Select platform to scrape (or auto-rotate):'
+        required: true
+        default: 'auto_rotate'
+        type: choice
+        options:
+          - 'auto_rotate'
+          - 'yc'
+          - 'yc_rfs'
+          - 'linkedin'
+          - 'wellfound'
+          - 'all'
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to commit and push updated factory.db and raw_jobs.json
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Install Node Dependencies & Playwright
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Install Python Dependencies
+        run: pip install -r requirements.txt
+
+      - name: 🔑 Configure Scraper Authentication State
+        id: auth_check
+        run: |
+          mkdir -p data
+          if [ -n "${{ secrets.AUTH_STATE_BASE64 }}" ]; then
+            echo "Decoding AUTH_STATE_BASE64 to data/auth_state.json..."
+            echo "${{ secrets.AUTH_STATE_BASE64 }}" | base64 -d > data/auth_state.json
+            echo "auth_available=true" >> $GITHUB_OUTPUT
+            echo "✅ Session cookies loaded successfully."
+          else
+            echo "auth_available=false" >> $GITHUB_OUTPUT
+            echo "::warning::AUTH_STATE_BASE64 secret is missing! LinkedIn and Wellfound may be skipped or run in guest mode. Run 'node scrapers/auth_manager.js' locally to generate and copy the secret."
+          fi
+
+      - name: 🕸️ Run Rotating Scraper
+        run: |
+          CHOICE="${{ github.event.inputs.platform_target || 'auto_rotate' }}"
+          echo "Selected mode: $CHOICE"
+
+          if [ "$CHOICE" = "auto_rotate" ]; then
+            DAY_OF_YEAR=$(date +%j)
+            INDEX=$(( (10#$DAY_OF_YEAR) % 4 ))
+            echo "Day of Year: $DAY_OF_YEAR | Rotation Index: $INDEX"
+            
+            case $INDEX in
+              0)
+                echo "🚀 Day 0: Scraping YC (Work at a Startup)..."
+                node scrapers/yc_scraper.js || true
+                ;;
+              1)
+                echo "🚀 Day 1: Scraping YC Requests for Startups (RFS)..."
+                node scrapers/yc_rfs_scraper.js || true
+                ;;
+              2)
+                echo "🚀 Day 2: Scraping LinkedIn Jobs..."
+                node scrapers/linkedin_scraper.js || true
+                ;;
+              3)
+                echo "🚀 Day 3: Scraping Wellfound..."
+                node scrapers/wellfound_scraper.js || true
+                ;;
+            esac
+          elif [ "$CHOICE" = "all" ]; then
+            echo "🚀 Running all scrapers in sequence..."
+            node scrapers/yc_scraper.js || true
+            node scrapers/yc_rfs_scraper.js || true
+            node scrapers/linkedin_scraper.js || true
+            node scrapers/wellfound_scraper.js || true
+          else
+            echo "🚀 Running chosen scraper: $CHOICE..."
+            node "scrapers/${CHOICE}_scraper.js" || true
+          fi
+
+      - name: 🧠 Run AI Idea Generation Engine
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          KNOWN_STACK: "Node.js, Python, React"
+        run: python engine/analyzer.py
+
+      - name: 💾 Commit & Push Updated Database to GitHub
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/factory.db data/raw_jobs.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update ideas database [skip ci]" && git push)

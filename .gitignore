@@ -1,0 +1,22 @@
+# Environment variables & secrets
+.env
+.env.local
+*.b64.txt
+data/auth_state.json
+data/auth_state.b64.txt
+
+# Dependencies & Environments
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# OS & IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Builds exports (optional)
+scratch/
