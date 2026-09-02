@@ -4756,5 +4756,69 @@
     "link": "https://account.ycombinator.com/authenticate?continue=https%3A%2F%2Fwww.workatastartup.com%2F%3Fsignup_job_id%3D95828&defaults%5BsignUpActive%5D=true&defaults%5Bwaas_company%5D=27252",
     "source": "yc",
     "scraped_at": "2026-09-01T03:39:05.128Z"
+  },
+  {
+    "company": "Y Combinator (RFS)",
+    "title": "Fall 2026",
+    "description": "AI is moving into the physical world. We're excited about a new wave of startups rebuilding the systems that power the real world, from education and healthcare to defense, finance, infrastructure, and work itself. This batch's requests come from YC partners and founders building on the frontier, and include, for the first time, one from the sitting U.S. Secretary of the Army.",
+    "link": "https://www.ycombinator.com/rfs",
+    "source": "yc_rfs",
+    "scraped_at": "2026-09-02T02:55:10.864Z"
+  },
+  {
+    "company": "Y Combinator (RFS)",
+    "title": "The Future of American Defense#",
+    "description": "By Daniel P. Driscoll, US Secretary of the Army",
+    "link": "https://www.ycombinator.com/rfs",
+    "source": "yc_rfs",
+    "scraped_at": "2026-09-02T02:55:10.864Z"
+  },
+  {
+    "company": "Y Combinator (RFS)",
+    "title": "Compute at Sea#",
+    "description": "By Francois Chaubard",
+    "link": "https://www.ycombinator.com/rfs",
+    "source": "yc_rfs",
+    "scraped_at": "2026-09-02T02:55:10.864Z"
+  },
+  {
+    "company": "Y Combinator (RFS)",
+    "title": "Data for the Real World#",
+    "description": "By Austin Tindle and Diana Hu",
+    "link": "https://www.ycombinator.com/rfs",
+    "source": "yc_rfs",
+    "scraped_at": "2026-09-02T02:55:10.864Z"
+  },
+  {
+    "company": "Y Combinator (RFS)",
+    "title": "Footer",
+    "description": "Y Combinator\nMake something people want.\nPrograms\nYC Program\nStartup School\nWork at a Startup\nCo-Founder Matching\nResources\nStartup Directory\nStartup Library\nInvestors\nDemo Day\nSAFE\nHacker News\nLaunch YC\nYC Deals\nCompany\nYC Blog\nContact\nPress\nPeople\nCareers\nPrivacy Policy\nNotice at Collection\nSecurity\nTerms of Use\nTwitter\nFacebook\nInstagram\nLinkedIn\nYoutube\n\n© 2026 Y Combinator",
+    "link": "https://www.ycombinator.com/rfs",
+    "source": "yc_rfs",
+    "scraped_at": "2026-09-02T02:55:10.864Z"
+  },
+  {
+    "company": "Y Combinator (RFS)",
+    "title": "Programs",
+    "description": "YC Program\nStartup School\nWork at a Startup\nCo-Founder Matching",
+    "link": "https://www.ycombinator.com/rfs",
+    "source": "yc_rfs",
+    "scraped_at": "2026-09-02T02:55:10.864Z"
+  },
+  {
+    "company": "Y Combinator (RFS)",
+    "title": "Resources",
+    "description": "Startup Directory\nStartup Library\nInvestors\nDemo Day\nSAFE\nHacker News\nLaunch YC\nYC Deals",
+    "link": "https://www.ycombinator.com/rfs",
+    "source": "yc_rfs",
+    "scraped_at": "2026-09-02T02:55:10.864Z"
+  },
+  {
+    "company": "Y Combinator (RFS)",
+    "title": "Company",
+    "description": "YC Blog\nContact\nPress\nPeople\nCareers\nPrivacy Policy\nNotice at Collection\nSecurity\nTerms of Use",
+    "link": "https://www.ycombinator.com/rfs",
+    "source": "yc_rfs",
+    "scraped_at": "2026-09-02T02:55:10.864Z"
   }
 ]
