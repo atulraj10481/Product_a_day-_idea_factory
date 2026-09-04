@@ -1,0 +1,99 @@
+name: Streamlit Cloud Keep-Alive & Health Monitor
+
+on:
+  schedule:
+    # Runs every 2 hours (00:00, 02:00, 04:00, 06:00, 08:00, 10:00, 12:00, 14:00, 16:00, 18:00, 20:00, 22:00 UTC)
+    - cron: '0 */2 * * *'
+  workflow_dispatch:
+    inputs:
+      custom_url:
+        description: 'Optional custom URL to probe (defaults to https://idea-a-day.streamlit.app)'
+        required: false
+        default: 'https://idea-a-day.streamlit.app'
+        type: string
+
+jobs:
+  keep-alive-ping:
+    name: Uptime Ping & Sleep-Mode Prevention
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🌐 Determine Target Endpoint
+        id: config
+        run: |
+          RAW_URL="${{ github.event.inputs.custom_url || secrets.APP_URL || vars.APP_URL || 'https://idea-a-day.streamlit.app' }}"
+          # Strip trailing slashes
+          CLEAN_URL=$(echo "$RAW_URL" | sed 's:/*$::')
+          echo "target_url=${CLEAN_URL}" >> $GITHUB_OUTPUT
+          echo "health_url=${CLEAN_URL}/_stcore/health" >> $GITHUB_OUTPUT
+          echo "🎯 Target Base URL: ${CLEAN_URL}"
+          echo "🩺 Target Health URL: ${CLEAN_URL}/_stcore/health"
+
+      - name: 🩺 Probe Streamlit Core Health Endpoint (with 3 Retries)
+        run: |
+          TARGET_HEALTH="${{ steps.config.outputs.health_url }}"
+          MAX_RETRIES=3
+          RETRY_DELAY=15
+          SUCCESS=false
+
+          echo "Initiating health probe to: $TARGET_HEALTH"
+
+          for i in $(seq 1 $MAX_RETRIES); do
+            echo "Attempt $i of $MAX_RETRIES..."
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$TARGET_HEALTH" || echo "000")
+            echo "Response HTTP Code: $HTTP_CODE"
+
+            if [ "$HTTP_CODE" = "200" ]; then
+              echo "✅ Health check passed with HTTP 200 OK!"
+              SUCCESS=true
+              break
+            else
+              echo "⚠️ Health check returned HTTP $HTTP_CODE (Expected 200)."
+              if [ $i -lt $MAX_RETRIES ]; then
+                echo "Waiting $RETRY_DELAY seconds before retry..."
+                sleep $RETRY_DELAY
+              fi
+            fi
+          done
+
+          if [ "$SUCCESS" != "true" ]; then
+            echo "❌ Health check probe failed after $MAX_RETRIES attempts."
+            exit 1
+          fi
+
+      - name: 🚀 Warm Up Main Web App & Reset Inactivity Timer
+        run: |
+          TARGET_MAIN="${{ steps.config.outputs.target_url }}/"
+          USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 (UptimeMonitor/2.0)"
+
+          echo "Sending warm-up GET request to: $TARGET_MAIN"
+          START_TIME=$(date +%s%N)
+          HTTP_STATUS=$(curl -s -A "$USER_AGENT" -o /dev/null -w "%{http_code}" --max-time 45 "$TARGET_MAIN" || echo "000")
+          END_TIME=$(date +%s%N)
+
+          DURATION_MS=$(( (END_TIME - START_TIME) / 1000000 ))
+          echo "Main page responded with HTTP $HTTP_STATUS in ${DURATION_MS}ms."
+
+          if [ "$HTTP_STATUS" != "200" ] && [ "$HTTP_STATUS" != "304" ]; then
+            echo "::warning::Main page returned HTTP $HTTP_STATUS (Streamlit might still be completing a cold wake-up)."
+          else
+            echo "✅ Streamlit Cloud session successfully kept alive and cache warmed up."
+          fi
+
+      - name: 📋 Publish Execution Summary to Job Log
+        if: always()
+        run: |
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
+          TARGET="${{ steps.config.outputs.target_url }}"
+          
+          cat <<EOF >> $GITHUB_STEP_SUMMARY
+          ### 🩺 Streamlit Cloud Keep-Alive Monitor
+
+          | Attribute | Value |
+          | :--- | :--- |
+          | **Target Application** | [$TARGET]($TARGET) |
+          | **Execution Timestamp** | \`$TIMESTAMP\` |
+          | **Cadence** | Every 2 hours (\`0 */2 * * *\`) |
+          | **Status** | ✅ **Active / Warmed Up** |
+          | **Sleep Prevention** | Inactivity timer reset; sleep mode blocked |
+          EOF
