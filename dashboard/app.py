@@ -10,6 +10,14 @@ import base64
 from datetime import datetime
 from dotenv import load_dotenv
 
+# Ensure repository root and current directory are in sys.path
+_CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+_PROJECT_ROOT = os.path.dirname(_CURRENT_DIR)
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
+if _CURRENT_DIR not in sys.path:
+    sys.path.insert(0, _CURRENT_DIR)
+
 load_dotenv(override=True)
 
 # UTF-8 stdout configuration
@@ -18,25 +26,47 @@ if sys.stdout:
 if sys.stderr:
     sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
-from dashboard.db import (
-    get_db,
-    get_admin_email,
-    get_community_metrics,
-    get_user_review_stats,
-    save_user_review,
-    get_paginated_ideas,
-    get_distinct_filter_values
-)
-from dashboard.auth import (
-    get_current_user,
-    is_admin,
-    logout_user,
-    render_auth_dialog,
-    render_profile_dialog
-)
+try:
+    from dashboard.db import (
+        get_db,
+        get_admin_email,
+        get_community_metrics,
+        get_user_review_stats,
+        save_user_review,
+        get_paginated_ideas,
+        get_distinct_filter_values
+    )
+    from dashboard.auth import (
+        get_current_user,
+        is_admin,
+        logout_user,
+        render_auth_dialog,
+        render_profile_dialog
+    )
+except (ModuleNotFoundError, ImportError):
+    from db import (
+        get_db,
+        get_admin_email,
+        get_community_metrics,
+        get_user_review_stats,
+        save_user_review,
+        get_paginated_ideas,
+        get_distinct_filter_values
+    )
+    from auth import (
+        get_current_user,
+        is_admin,
+        logout_user,
+        render_auth_dialog,
+        render_profile_dialog
+    )
 
 # ─── Logo Helper ─────────────────────────────────────────────────────────────
-LOGO_PATH = "dashboard/assets/logo.png"
+_LOGO_FILE = os.path.join(_CURRENT_DIR, "assets", "logo.png")
+if os.path.exists(_LOGO_FILE):
+    LOGO_PATH = _LOGO_FILE
+else:
+    LOGO_PATH = os.path.join(_PROJECT_ROOT, "dashboard", "assets", "logo.png")
 
 def get_base64_logo():
     if os.path.exists(LOGO_PATH):
@@ -495,7 +525,7 @@ def run_admin_script(cmd, label):
                 cmd,
                 capture_output=True,
                 text=True,
-                cwd=os.getcwd(),
+                cwd=_PROJECT_ROOT,
                 timeout=300,
                 encoding='utf-8',
                 errors='replace'

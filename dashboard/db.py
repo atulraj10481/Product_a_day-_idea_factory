@@ -1,10 +1,18 @@
 import sqlite3
 import os
+import sys
 import json
 from datetime import datetime
 import pandas as pd
 
-DB_PATH = 'data/factory.db'
+_CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+_PROJECT_ROOT = os.path.dirname(_CURRENT_DIR)
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
+if _CURRENT_DIR not in sys.path:
+    sys.path.insert(0, _CURRENT_DIR)
+
+DB_PATH = os.path.join(_PROJECT_ROOT, 'data', 'factory.db')
 DEFAULT_ADMIN_EMAIL = 'warrioratul7146@gmail.com'
 
 def get_admin_emails():
@@ -29,7 +37,7 @@ def get_admin_email():
 
 def get_db():
     """Return a thread-safe sqlite3 connection and ensure all tables exist."""
-    os.makedirs('data', exist_ok=True)
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     conn = sqlite3.connect(DB_PATH, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     init_schema(conn)

@@ -1,4 +1,5 @@
 import os
+import sys
 import secrets
 import requests
 import smtplib
@@ -8,18 +9,37 @@ from dotenv import load_dotenv
 import streamlit as st
 from datetime import datetime
 
+_CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+_PROJECT_ROOT = os.path.dirname(_CURRENT_DIR)
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
+if _CURRENT_DIR not in sys.path:
+    sys.path.insert(0, _CURRENT_DIR)
+
 load_dotenv(override=True)
 
-from dashboard.db import (
-    store_otp,
-    verify_otp,
-    check_otp_rate_limits,
-    record_otp_audit,
-    get_or_create_user,
-    get_user_review_stats,
-    get_admin_email,
-    is_admin_email
-)
+try:
+    from dashboard.db import (
+        store_otp,
+        verify_otp,
+        check_otp_rate_limits,
+        record_otp_audit,
+        get_or_create_user,
+        get_user_review_stats,
+        get_admin_email,
+        is_admin_email
+    )
+except (ModuleNotFoundError, ImportError):
+    from db import (
+        store_otp,
+        verify_otp,
+        check_otp_rate_limits,
+        record_otp_audit,
+        get_or_create_user,
+        get_user_review_stats,
+        get_admin_email,
+        is_admin_email
+    )
 
 DEFAULT_FROM_EMAIL = "Product Idea Factory <onboarding@resend.dev>"
 
