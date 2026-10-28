@@ -4795,7 +4795,7 @@
     "description": "Y Combinator\nMake something people want.\nPrograms\nYC Program\nStartup School\nWork at a Startup\nCo-Founder Matching\nResources\nStartup Directory\nStartup Library\nInvestors\nDemo Day\nSAFE\nHacker News\nLaunch YC\nYC Deals\nCompany\nYC Blog\nContact\nPress\nPeople\nCareers\nPrivacy Policy\nNotice at Collection\nSecurity\nTerms of Use\nTwitter\nFacebook\nInstagram\nLinkedIn\nYoutube\n\n© 2026 Y Combinator",
     "link": "https://www.ycombinator.com/rfs",
     "source": "yc_rfs",
-    "scraped_at": "2026-10-24T03:19:57.349Z"
+    "scraped_at": "2026-10-28T04:01:54.849Z"
   },
   {
     "company": "Y Combinator (RFS)",
@@ -4803,7 +4803,7 @@
     "description": "YC Program\nStartup School\nWork at a Startup\nCo-Founder Matching",
     "link": "https://www.ycombinator.com/rfs",
     "source": "yc_rfs",
-    "scraped_at": "2026-10-24T03:19:57.349Z"
+    "scraped_at": "2026-10-28T04:01:54.849Z"
   },
   {
     "company": "Y Combinator (RFS)",
@@ -4811,7 +4811,7 @@
     "description": "Startup Directory\nStartup Library\nInvestors\nDemo Day\nSAFE\nHacker News\nLaunch YC\nYC Deals",
     "link": "https://www.ycombinator.com/rfs",
     "source": "yc_rfs",
-    "scraped_at": "2026-10-24T03:19:57.349Z"
+    "scraped_at": "2026-10-28T04:01:54.849Z"
   },
   {
     "company": "Y Combinator (RFS)",
@@ -4819,7 +4819,7 @@
     "description": "YC Blog\nContact\nPress\nPeople\nCareers\nPrivacy Policy\nNotice at Collection\nSecurity\nTerms of Use",
     "link": "https://www.ycombinator.com/rfs",
     "source": "yc_rfs",
-    "scraped_at": "2026-10-24T03:19:57.349Z"
+    "scraped_at": "2026-10-28T04:01:54.849Z"
   },
   {
     "company": "Raft",
@@ -14612,5 +14612,13 @@
     "link": "https://www.linkedin.com/jobs/view/senior-full-stack-engineer-at-checkbook-4482815459?position=53&pageNum=0&refId=PzBJSZSYIo52HKjO7ZYMkw%3D%3D&trackingId=qJIuAsh7JOgHMIjK%2FoubHQ%3D%3D",
     "source": "linkedin",
     "scraped_at": "2026-10-25T03:16:48.097Z"
+  },
+  {
+    "company": "Y Combinator (RFS)",
+    "title": "Winter 2027",
+    "description": "AI's biggest bottlenecks are moving beyond the models. We're excited about a new wave of startups building the hardware, infrastructure, financial systems, and specialized software needed to bring intelligence into the real economy, from factories and data centers to government and space.",
+    "link": "https://www.ycombinator.com/rfs",
+    "source": "yc_rfs",
+    "scraped_at": "2026-10-28T04:01:54.849Z"
   }
 ]
